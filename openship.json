@@ -1,0 +1,5 @@
+{
+  "$schema": "https://openship.io/openship.schema.json",
+  "framework": "nextjs",
+  "composePath": "deploy/docker-compose/docker-compose.yml"
+}
