@@ -14,6 +14,7 @@ import pkg from "../../package.json";
 const dev = process.env.NODE_ENV !== "production";
 const hostname = process.env.HOSTNAME || "localhost";
 const port = parseInt(process.env.PORT || "3030", 10);
+const host = process.env.HOST || "0.0.0.0";
 
 if (!process.env.AUTH_SECRET) {
   logger.error("Server", "AUTH_SECRET is not set. Generate one with: openssl rand -base64 32");
@@ -61,7 +62,7 @@ app.prepare().then(() => {
   server.keepAliveTimeout = 120 * 1000; // 120 seconds
   server.headersTimeout = 120 * 1000; // 120 seconds
 
-  server.listen(port, () => {
+  server.listen(port, host, () => {
     logger.banner(pkg.name.toUpperCase(), pkg.version, port);
 
     // --- WA-AKG Monitor Heartbeat ---

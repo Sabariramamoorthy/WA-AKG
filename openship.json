@@ -1,5 +1,11 @@
 {
   "$schema": "https://openship.io/openship.schema.json",
   "framework": "nextjs",
-  "composePath": "deploy/docker-compose/docker-compose.yml"
+  "packageManager": "npm",
+  "composePath": "docker-compose.yml",
+  "installCommand": "npm ci --legacy-peer-deps",
+  "buildCommand": "npx prisma generate && npm run build",
+  "startCommand": "sh scripts/docker-start.sh",
+  "port": 3020,
+  "runtime": "docker"
 }

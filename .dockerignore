@@ -20,6 +20,7 @@ test-*.ts
 test-*.js
 fix_test.js
 *.patch
+!patches/*.patch
 
 # Environment
 .env

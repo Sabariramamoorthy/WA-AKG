@@ -1,55 +1,61 @@
-version: '3.8'
-
 services:
   db:
     image: mysql:8.0
-    container_name: wa-akg-db
-    restart: always
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-wa_akg}
-    ports:
-      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 30s
 
-  app:
+  wa-akg:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: wa-akg-app
-    restart: always
+    command: ["sh", "scripts/docker-start.sh"]
+    restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "${APP_PORT:-3020}:3020"
     environment:
-      - DATABASE_URL=mysql://root:${MYSQL_ROOT_PASSWORD}@db:3306/${MYSQL_DATABASE:-wa_akg}
-      - AUTH_SECRET=${AUTH_SECRET}
-      - BASE_URL=${BASE_URL:-http://localhost:3000}
-      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
-      - NODE_ENV=production
-      - PORT=${PORT:-3000}
-      - HOSTNAME=0.0.0.0
-      - NEXT_PUBLIC_APP_URL=${BASE_URL:-http://localhost:3000}
-      - NEXT_PUBLIC_API_URL=${BASE_URL:-http://localhost:3000}/api
-      - BAILEYS_LOG_LEVEL=${BAILEYS_LOG_LEVEL:-error}
-      - NEXT_PUBLIC_SWAGGER_USERNAME=${NEXT_PUBLIC_SWAGGER_USERNAME:-admin}
-      - NEXT_PUBLIC_SWAGGER_PASSWORD=${NEXT_PUBLIC_SWAGGER_PASSWORD}
-      - NEXT_PUBLIC_SWAGGER_ENABLED=${NEXT_PUBLIC_SWAGGER_ENABLED:-true}
-      - TZ=${TZ:-Asia/Jakarta}
-      - LOCALE=${LOCALE:-id-ID}
-      - ADMIN_EMAIL=${ADMIN_EMAIL}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      PORT: "3020"
+      HOST: "0.0.0.0"
+      HOSTNAME: "0.0.0.0"
+      NODE_ENV: production
+      DATABASE_URL: mysql://root:${MYSQL_ROOT_PASSWORD}@db:3306/${MYSQL_DATABASE:-wa_akg}
+      AUTH_SECRET: ${AUTH_SECRET}
+      AUTH_TRUST_HOST: "true"
+      BASE_URL: ${BASE_URL:-http://localhost:3020}
+      NEXTAUTH_URL: ${BASE_URL:-http://localhost:3020}
+      NEXT_PUBLIC_APP_URL: ${BASE_URL:-http://localhost:3020}
+      NEXT_PUBLIC_API_URL: ${BASE_URL:-http://localhost:3020}/api
+      APP_NAME: ${APP_NAME:-WA-AKG}
+      BAILEYS_LOG_LEVEL: ${BAILEYS_LOG_LEVEL:-error}
+      NEXT_PUBLIC_SWAGGER_ENABLED: ${NEXT_PUBLIC_SWAGGER_ENABLED:-true}
+      NEXT_PUBLIC_SWAGGER_USERNAME: ${NEXT_PUBLIC_SWAGGER_USERNAME:-admin}
+      NEXT_PUBLIC_SWAGGER_PASSWORD: ${NEXT_PUBLIC_SWAGGER_PASSWORD}
+      REMOVE_BG_API_KEY: ${REMOVE_BG_API_KEY:-}
+      TZ: ${TZ:-Asia/Jakarta}
+      LOCALE: ${LOCALE:-id-ID}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
     depends_on:
       db:
         condition: service_healthy
     volumes:
       - app_data:/app/data
       - uploads_data:/app/uploads
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3020/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 90s
 
 volumes:
   mysql_data:
