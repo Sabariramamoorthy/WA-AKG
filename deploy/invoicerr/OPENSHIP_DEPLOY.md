@@ -46,3 +46,13 @@ Redeploy / restart the **invoicerr** service so the entrypoint runs. Confirm:
 
 - Email bodies: `templates/sindhus-pickles/apply-email-templates.py`
 - UI guide: `templates/sindhus-pickles/UI_STATUS_AND_TEMPLATES.md`
+
+## Prefer building from the Invoicerr fork (native source)
+
+Sindhu B2B/B2C + branding are now in parent source:
+
+- Repo: https://github.com/cloudshiftsolutions-dev/invoicerr
+- Branch: `cursor/sindhu-gst-templates-a84b`
+- Guide: `CLOUDSHIFT_SINDHU.md` in that repo
+
+Build/push an image from that branch and point Openship at it (instead of stock `ghcr.io/invoicerr-app/invoicerr` + entrypoint overlays).
