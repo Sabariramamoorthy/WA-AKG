@@ -1,7 +1,7 @@
 # CloudShift Invoicerr – Phase 1 Baseline (Sindhu's Pickles)
 
 **Approach:** Fork → Deploy → Understand → Customize → Test → Production  
-**Status (2026-11-13, Asia/Calcutta):** Unmodified Invoicerr is running locally in the Cloud Agent VM. GitHub fork into `cloudshiftsolutions-dev` is still blocked (agent cannot create forks). Public domain/HTTPS not configured (no public hostname on this VM).
+**Status (2026-11-13, Asia/Calcutta):** Unmodified Invoicerr **v1.4.5c** is live on HP Mini via Openship + VPS Caddy at https://invoicerr.app.cloudshiftsolutions.in. Local Cloud Agent baseline smoke tests are recorded. GitHub fork into `cloudshiftsolutions-dev` is still blocked (agent cannot create forks).
 
 ## Official source
 
@@ -33,7 +33,15 @@
 - Persistent volumes: `db_data`, `db_backups`, `redis-data`, `documents_data`
 - Compose: upstream `docker-compose.yml` + CloudShift local override (see `docker-compose.local.yml`)
 
-## Local URL
+## Public URL (HP Mini / Openship)
+
+- App: https://invoicerr.app.cloudshiftsolutions.in  
+- Health: `GET /api/health` → `{"status":"ok","database":"up"}`  
+- Sign-in: https://invoicerr.app.cloudshiftsolutions.in/auth/sign-in  
+- Compose: `deploy/invoicerr/docker-compose.yml` (`PORT=3000` required so Nest does not steal nginx `:80`)  
+- Edge: Caddy (VPS) → Tailscale `100.98.161.75:80` → Openship published `127.0.0.1:20012`
+
+## Local URL (Cloud Agent smoke)
 
 - App: http://127.0.0.1:80  
 - Health: `GET /api/health` → `{"status":"ok","database":"up"}`  
@@ -67,12 +75,11 @@ On a normal homelab/VPS with working Docker bridge, use unmodified upstream comp
 | Payment | `POST /api/payments/create-from-invoice` with `{"id":"<invoiceId>"}` → ₹500 paid |
 | PDF | `GET /api/invoices/:id/pdf` → PDF 1.4, ~67 KB |
 
-## Still required for true M1 “production-shaped” baseline
+## Still required after live baseline
 
 1. **User action:** Fork https://github.com/invoicerr-app/invoicerr into `cloudshiftsolutions-dev`, grant Cursor GitHub App access, reply with fork URL.
-2. Deploy the same unmodified image on homelab/VPS with working Docker networking.
-3. Configure public domain + HTTPS (Caddy/Traefik/nginx).
-4. Recreate admin with a strong secret; store secrets in Infisical / environment secrets (never commit `.env`).
+2. First-user / admin signup on the public URL (fresh HP Mini DB); store secrets in Infisical / Openship env (never commit `.env`).
+3. Only then start India/GST/PDF customization on the fork (not on floating `dev`).
 
 ## AGPL note
 
