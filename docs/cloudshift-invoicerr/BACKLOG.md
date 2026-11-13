@@ -36,3 +36,13 @@ Do **not** start these until the unmodified baseline is forked and redeployable 
 - [ ] E2E B2C/B2B paths
 - [ ] Production secrets, backups, HTTPS
 - [ ] AGPL corresponding-source publication
+
+## Invoice pack (2026-11-13)
+
+Committed under `deploy/invoicerr/templates/sindhus-pickles/`:
+- Reference B2B/B2C HTML + CSS + email pack from Zepto/Sindhu pack
+- `invoicerr-base.template.js` adapted for stock Invoicerr Handlebars context
+- Mapped INVOICE + PAYMENT emails applied live
+- PDF brand colors `#063f32` / cream secondary
+
+Still post-fork: per-line HSN columns, separate CGST/SGST/IGST amounts, amount-in-words helper, payment-reminder mail type.
