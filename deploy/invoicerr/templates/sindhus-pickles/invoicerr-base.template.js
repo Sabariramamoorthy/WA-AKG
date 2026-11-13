@@ -1,10 +1,7 @@
 "use strict";
 /**
  * Sindhu's Pickles PDF template for stock Invoicerr (Handlebars).
- * Adapted from invoice-b2b.html / invoice-b2c.html + invoice.css.
- *
- * Runtime context comes from InvoicesService.getInvoicePDF — not the pack's
- * logical placeholders. B2B when client.VAT or client.type === COMPANY.
+ * B2B when `isB2B` is true (from notes [[TEMPLATE:B2B]] / buyer GSTIN), else B2C retail.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.baseTemplate = void 0;
@@ -13,45 +10,49 @@ exports.baseTemplate = `
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>{{#if client.VAT}}TAX INVOICE{{else}}{{#if client.legalId}}TAX INVOICE{{else}}RETAIL INVOICE{{/if}}{{/if}} {{number}}</title>
+  <title>{{#if isB2B}}TAX INVOICE{{else}}RETAIL INVOICE{{/if}} {{number}}</title>
   <style>
     :root{--green:#063f32;--green2:#0b5a45;--gold:#c89b3c;--cream:#f7f4ea;--ink:#17251f;--muted:#63716b;--line:#d9ded8}
     *{box-sizing:border-box}
-    body{margin:0;color:var(--ink);font:10.5pt/1.42 {{fontFamily}},Arial,Helvetica,sans-serif;padding:{{padding}}px}
-    .topbar{height:8px;background:linear-gradient(90deg,var(--green),var(--green2),var(--gold));margin:0 0 12px}
-    .brand{display:flex;align-items:flex-start;gap:14px;border-bottom:1px solid var(--line);padding-bottom:12px}
-    .logo{max-height:72px;max-width:72px;object-fit:contain}
-    .brand h1{margin:0;color:var(--green);font:700 22pt Georgia,serif;letter-spacing:-.5px}
-    .tagline{margin:3px 0 0;color:var(--muted);font-style:italic;font-size:9.5pt}
-    .seller{margin-left:auto;text-align:right;font-size:9pt;line-height:1.5;max-width:46%}
-    .dochead{display:flex;justify-content:space-between;align-items:flex-end;margin:18px 0 12px;gap:12px}
-    .dochead h2{margin:0;color:var(--green);font:700 18pt Georgia,serif}
-    .pill{display:inline-block;border:1px solid var(--gold);color:var(--green);padding:3px 8px;border-radius:20px;font-size:8pt;font-weight:700;margin-top:6px}
-    .meta{min-width:210px;background:var(--cream);border:1px solid #e9dfc8;border-radius:8px;padding:10px 12px;font-size:9pt}
-    .meta-row{display:flex;justify-content:space-between;gap:12px;padding:2px 0}
+    html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    body{margin:0;color:var(--ink);font:10pt/1.35 {{fontFamily}},Arial,Helvetica,sans-serif;padding:{{padding}}px}
+    .topbar{height:6px;background:linear-gradient(90deg,var(--green),var(--green2),var(--gold));margin:0 0 8px}
+    .brand{display:flex;align-items:flex-start;gap:12px;border-bottom:1px solid var(--line);padding-bottom:8px}
+    .logo{max-height:56px;max-width:56px;object-fit:contain}
+    .brand h1{margin:0;color:var(--green);font:700 18pt Georgia,serif;letter-spacing:-.4px}
+    .tagline{margin:2px 0 0;color:var(--muted);font-style:italic;font-size:8.5pt}
+    .seller{margin-left:auto;text-align:right;font-size:8.5pt;line-height:1.4;max-width:46%}
+    .dochead{display:flex;justify-content:space-between;align-items:flex-end;margin:12px 0 8px;gap:10px}
+    .dochead h2{margin:0;color:var(--green);font:700 15pt Georgia,serif}
+    .pill{display:inline-block;border:1px solid var(--gold);color:var(--green);padding:2px 7px;border-radius:20px;font-size:7.5pt;font-weight:700;margin-top:4px}
+    .meta{min-width:190px;background:var(--cream);border:1px solid #e9dfc8;border-radius:6px;padding:8px 10px;font-size:8.5pt}
+    .meta-row{display:flex;justify-content:space-between;gap:10px;padding:1px 0}
     .meta-row span:first-child{color:var(--muted)}
-    .cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-    .panel{border:1px solid var(--line);border-radius:8px;overflow:hidden}
-    .panel h3{margin:0;padding:7px 10px;background:#edf3ee;color:var(--green);font-size:8.5pt;text-transform:uppercase;letter-spacing:.5px}
-    .panel .body{padding:10px;min-height:70px;font-size:9.5pt;line-height:1.45}
-    table{width:100%;border-collapse:collapse;margin:14px 0 10px;font-size:9pt}
-    thead th{background:var(--green);color:#fff;padding:8px 6px;text-align:left;font-size:8.5pt}
-    tbody td{border-bottom:1px solid var(--line);padding:8px 6px;vertical-align:top}
+    .cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;page-break-inside:avoid;break-inside:avoid}
+    .panel{border:1px solid var(--line);border-radius:6px;overflow:hidden;page-break-inside:avoid;break-inside:avoid}
+    .panel h3{margin:0;padding:5px 8px;background:#edf3ee;color:var(--green);font-size:8pt;text-transform:uppercase;letter-spacing:.4px}
+    .panel .body{padding:8px;min-height:54px;font-size:8.5pt;line-height:1.35}
+    table{width:100%;border-collapse:collapse;margin:8px 0 6px;font-size:8.5pt}
+    thead{display:table-header-group}
+    thead th{background:var(--green);color:#fff;padding:6px 5px;text-align:left;font-size:8pt}
+    tbody td{border-bottom:1px solid var(--line);padding:6px 5px;vertical-align:top}
+    tbody tr{page-break-inside:avoid;break-inside:avoid}
     tbody tr:nth-child(even){background:#fafbf9}
     .num{text-align:right;white-space:nowrap}
-    .item-description{display:block;color:var(--muted);font-size:8pt;margin-top:2px;white-space:pre-line}
-    .summary-wrap{display:flex;justify-content:space-between;gap:16px;margin-top:8px}
-    .note{flex:1;background:var(--cream);border-radius:8px;padding:12px;font-size:9pt}
-    .totals{width:48%;border:1px solid var(--line);border-radius:8px;overflow:hidden;font-size:9.5pt}
-    .total-row{display:flex;justify-content:space-between;padding:7px 10px;border-bottom:1px solid var(--line)}
-    .total-row.grand{background:var(--green);color:#fff;font-weight:700;font-size:12pt;border:0}
-    .bankrow{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
-    .bank{border:1px solid var(--line);border-radius:8px;padding:10px;font-size:8.5pt;line-height:1.45}
-    .bank h3{margin:0 0 6px;color:var(--green);font-size:9pt}
-    .footer{border-top:2px solid var(--gold);margin-top:16px;padding-top:10px;display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:8pt}
-    .sign{text-align:right;min-width:150px;color:var(--ink)}
-    .signline{margin:22px 0 4px;border-top:1px solid #7c8982;padding-top:4px}
-    .watermark{position:fixed;top:45%;left:50%;transform:translate(-50%,-50%) rotate(-30deg);font-size:86px;font-weight:bold;color:#c0392b;opacity:.12;z-index:1000;pointer-events:none;white-space:nowrap}
+    .item-description{display:block;color:var(--muted);font-size:7.5pt;margin-top:1px;white-space:pre-line}
+    .summary-wrap{display:flex;justify-content:space-between;gap:12px;margin-top:6px;page-break-inside:avoid;break-inside:avoid}
+    .note{flex:1;background:var(--cream);border-radius:6px;padding:8px;font-size:8.5pt}
+    .totals{width:46%;border:1px solid var(--line);border-radius:6px;overflow:hidden;font-size:8.5pt;page-break-inside:avoid;break-inside:avoid}
+    .total-row{display:flex;justify-content:space-between;padding:5px 8px;border-bottom:1px solid var(--line)}
+    .total-row.grand{background:var(--green);color:#fff;font-weight:700;font-size:11pt;border:0}
+    .closing{page-break-inside:avoid;break-inside:avoid;margin-top:10px}
+    .bankrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;page-break-inside:avoid;break-inside:avoid}
+    .bank{border:1px solid var(--line);border-radius:6px;padding:8px;font-size:8pt;line-height:1.35;page-break-inside:avoid;break-inside:avoid}
+    .bank h3{margin:0 0 4px;color:var(--green);font-size:8.5pt}
+    .footer{border-top:2px solid var(--gold);margin-top:10px;padding-top:8px;display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:7.5pt;page-break-inside:avoid;break-inside:avoid}
+    .sign{text-align:right;min-width:140px;color:var(--ink)}
+    .signline{margin:16px 0 3px;border-top:1px solid #7c8982;padding-top:3px}
+    .watermark{position:fixed;top:45%;left:50%;transform:translate(-50%,-50%) rotate(-30deg);font-size:72px;font-weight:bold;color:#c0392b;opacity:.12;z-index:1000;pointer-events:none;white-space:nowrap}
     .made-with{display:none}
   </style>
 </head>
@@ -63,7 +64,7 @@ exports.baseTemplate = `
     <div>
       <h1>{{company.name}}</h1>
       <p class="tagline">Homemade Non-Vegetarian Pickles</p>
-      <div style="font-size:8.5pt;color:var(--muted)">Traditional recipes · Gingelly oil · Salem, Tamil Nadu</div>
+      <div style="font-size:8pt;color:var(--muted)">Traditional recipes · Gingelly oil · Salem, Tamil Nadu</div>
     </div>
     <div class="seller">
       <b>{{company.name}}</b><br>
@@ -77,17 +78,12 @@ exports.baseTemplate = `
 
   <section class="dochead">
     <div>
-      {{#if client.VAT}}
+      {{#if isB2B}}
         <h2>TAX INVOICE</h2>
         <span class="pill">B2B · GST INVOICE</span>
       {{else}}
-        {{#if client.legalId}}
-          <h2>TAX INVOICE</h2>
-          <span class="pill">B2B · GST INVOICE</span>
-        {{else}}
-          <h2>RETAIL INVOICE</h2>
-          <span class="pill">B2C · CUSTOMER COPY</span>
-        {{/if}}
+        <h2>RETAIL INVOICE</h2>
+        <span class="pill">B2C · CUSTOMER COPY</span>
       {{/if}}
     </div>
     <div class="meta">
@@ -153,7 +149,7 @@ exports.baseTemplate = `
   <section class="summary-wrap">
     <div class="note">
       {{#if noteExists}}
-        <b>{{labels.notes}}</b><br>{{{notes}}}
+        <b>{{labels.notes}}</b><br>{{{notesDisplay}}}
       {{else}}
         <b>Thank you for choosing {{company.name}}.</b><br>
         Store in a cool, dry place. Refrigerate after opening.
@@ -171,6 +167,7 @@ exports.baseTemplate = `
     </div>
   </section>
 
+  <div class="closing">
   {{#if paymentMethod}}
   <section class="bankrow">
     <div class="bank">
@@ -196,6 +193,7 @@ exports.baseTemplate = `
       <div class="signline">Authorised Signatory</div>
     </div>
   </footer>
+  </div>
 </body>
 </html>
 `;
