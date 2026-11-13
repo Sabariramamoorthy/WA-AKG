@@ -36,11 +36,16 @@ cd /usr/share/nginx/backend
 npx prisma db push --accept-data-loss --schema=/usr/share/nginx/backend/prisma/schema.prisma
 cd /usr/share/nginx/backend/src
 
-# Overlay Sindhu B2B/B2C invoice PDF template when present in the image/repo mount.
-if [ -f /usr/share/nginx/backend/src/modules/invoices/templates/base.template.js.sindhu ]; then
-  echo "Applying Sindhu invoice PDF template overlay..."
-  cp /usr/share/nginx/backend/src/modules/invoices/templates/base.template.js.sindhu \
-     /usr/share/nginx/backend/src/modules/invoices/templates/base.template.js
+# Overlay Sindhu B2B/B2C invoice PDF template (sidecar file or GitHub raw fallback).
+TPL_DST=/usr/share/nginx/backend/src/modules/invoices/templates/base.template.js
+TPL_SRC=/usr/share/nginx/backend/src/modules/invoices/templates/base.template.js.sindhu
+TPL_URL="${SINDHU_INVOICE_TEMPLATE_URL:-https://raw.githubusercontent.com/Sabariramamoorthy/WA-AKG/cursor/invoicerr-phase1-baseline-a84b/deploy/invoicerr/templates/sindhus-pickles/invoicerr-base.template.js}"
+if [ -f "$TPL_SRC" ]; then
+  echo "Applying Sindhu invoice PDF template overlay (sidecar)..."
+  cp "$TPL_SRC" "$TPL_DST"
+elif command -v curl >/dev/null 2>&1; then
+  echo "Fetching Sindhu invoice PDF template overlay..."
+  curl -fsSL "$TPL_URL" -o "$TPL_DST" || echo "WARN: could not fetch Sindhu template; keeping image default"
 fi
 
 # Start the backend service
