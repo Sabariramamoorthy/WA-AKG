@@ -12,6 +12,9 @@ services:
     volumes:
       - documents_data:/data
     environment:
+      # Nest must stay on 3000; Openship exposedPort injects PORT=80 otherwise and
+      # Nest steals :80 so entrypoint never sees nc -z localhost 3000 / never starts nginx.
+      PORT: "3000"
       DATABASE_URL: postgresql://invoicerr:${POSTGRES_PASSWORD}@invoicerr_db:5432/invoicerr_db
       APP_URL: ${APP_URL}
       CORS_ORIGINS: ${CORS_ORIGINS}
