@@ -1,0 +1,86 @@
+# Unmodified Invoicerr baseline for Openship on CloudShift HP Mini Elite.
+# Image: ghcr.io/invoicerr-app/invoicerr (stable release tag, not floating :latest).
+# TLS ends at VPS Caddy; Openship edge routes Host → this app on container port 80.
+# Secrets come from Openship service env (${...} placeholders only in this file).
+
+services:
+  invoicerr:
+    # Pin digest of release v1.4.5c (ghcr :latest matched this on 2026-11-13)
+    image: ghcr.io/invoicerr-app/invoicerr@sha256:615f4cec6cd1e22ac8e473c6ae33f7191ca93d32545fca38cddc3368b3419eec
+    ports:
+      - "${APP_PORT:-80}:80"
+    volumes:
+      - documents_data:/data
+    environment:
+      # Nest must stay on 3000; Openship exposedPort injects PORT=80 otherwise and
+      # Nest steals :80 so entrypoint never sees nc -z localhost 3000 / never starts nginx.
+      PORT: "3000"
+      DATABASE_URL: postgresql://invoicerr:${POSTGRES_PASSWORD}@invoicerr_db:5432/invoicerr_db
+      APP_URL: ${APP_URL}
+      CORS_ORIGINS: ${CORS_ORIGINS}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      CREDENTIALS_ENCRYPTION_KEY: ${CREDENTIALS_ENCRYPTION_KEY}
+      DOCUMENTS_ARCHIVE_DIR: /data/documents-archive
+      DOCUMENTS_INBOUND_DIR: /data/documents-inbound
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: ""
+      WORKER_INLINE: "true"
+      # No OIDC / SMTP for baseline (email can be configured later in-app)
+      MAIL_PROVIDER: ""
+      SMTP_HOST: ""
+      SMTP_USER: ""
+      SMTP_FROM: ""
+      SMTP_PASSWORD: ""
+      OIDC_NAME: ""
+      OIDC_DISCOVERY_URL: ""
+      OIDC_CLIENT_ID: ""
+      OIDC_CLIENT_SECRET: ""
+    depends_on:
+      invoicerr_db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "node -e \"fetch('http://127.0.0.1/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\"",
+        ]
+      interval: 15s
+      timeout: 10s
+      retries: 30
+      start_period: 120s
+    restart: unless-stopped
+
+  invoicerr_db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: invoicerr
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: invoicerr_db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U invoicerr -d invoicerr_db"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  db_data:
+  redis_data:
+  documents_data:

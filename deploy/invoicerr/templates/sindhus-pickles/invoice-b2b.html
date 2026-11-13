@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Sindhu's Pickles — GST Tax Invoice</title><link rel="stylesheet" href="invoice.css"></head>
+<body><main class="sheet"><div class="topbar"></div>
+<header class="brand">
+  <img class="logo" src="{{company.logoUrl}}" alt="Sindhu's Pickles logo">
+  <div><h1>Sindhu's Pickles</h1><p class="tagline">Homemade Non-Vegetarian Pickles</p><div class="small">Traditional recipes · Gingelly oil · No artificial preservatives*</div></div>
+  <div class="seller"><b>{{company.legalName}}</b><br>{{company.address}}<br>GSTIN: {{company.gstin}}<br>PAN: {{company.pan}}<br>{{company.phone}} · {{company.email}}</div>
+</header>
+<section class="dochead"><div><h2>TAX INVOICE</h2><span class="pill">B2B · GST INVOICE</span></div>
+<div class="meta"><div class="meta-row"><span>Invoice No.</span><b>{{invoice.number}}</b></div><div class="meta-row"><span>Invoice Date</span><b>{{invoice.date}}</b></div><div class="meta-row"><span>Due Date</span><b>{{invoice.dueDate}}</b></div><div class="meta-row"><span>PO / Reference</span><b>{{invoice.poNumber}}</b></div><div class="meta-row"><span>Place of Supply</span><b>{{invoice.placeOfSupply}}</b></div></div></section>
+<section class="cards"><div class="panel"><h3>Supplier / Bill From</h3><div class="body"><b>{{company.legalName}}</b><br>{{company.address}}<br>GSTIN: {{company.gstin}}</div></div>
+<div class="panel"><h3>Buyer / Bill To</h3><div class="body"><b>{{customer.businessName}}</b><br>{{customer.address}}<br>GSTIN: {{customer.gstin}}<br>{{customer.phone}} · {{customer.email}}</div></div>
+<div class="panel"><h3>Dispatch From</h3><div class="body">{{dispatch.address}}</div></div>
+<div class="panel"><h3>Ship To</h3><div class="body">{{shipping.address}}<br>Place of Supply: {{invoice.placeOfSupply}}</div></div></section>
+<table><thead><tr><th>#</th><th>Product / Description</th><th>HSN</th><th class="num">Qty</th><th class="num">Rate (₹)</th><th class="num">Taxable (₹)</th><th class="num">Tax (₹)</th><th class="num">Total (₹)</th></tr></thead><tbody>
+{{#each lines}}<tr><td>{{index}}</td><td><b>{{description}}</b><span class="taxnote">{{packSize}} · SKU {{sku}}</span></td><td>{{hsn}}</td><td class="num">{{quantity}}</td><td class="num">{{unitPrice}}</td><td class="num">{{taxableValue}}</td><td class="num">{{taxAmount}}</td><td class="num"><b>{{lineTotal}}</b></td></tr>{{/each}}
+</tbody></table>
+<section class="summary-wrap"><div class="note"><b>Amount in words</b><br>{{totals.amountInWords}}<br><br><span class="small">Payment terms: {{invoice.paymentTerms}}<br>Goods and returns: {{invoice.terms}}</span></div>
+<div class="totals"><div class="total-row"><span>Taxable Value</span><b>₹ {{totals.taxableValue}}</b></div><div class="total-row"><span>CGST</span><b>₹ {{totals.cgst}}</b></div><div class="total-row"><span>SGST</span><b>₹ {{totals.sgst}}</b></div><div class="total-row"><span>IGST</span><b>₹ {{totals.igst}}</b></div><div class="total-row"><span>Other charges</span><b>₹ {{totals.otherCharges}}</b></div><div class="total-row grand"><span>Invoice Total</span><span>₹ {{totals.grandTotal}}</span></div></div></section>
+<section class="bankrow"><div class="bank"><h3>Bank Details</h3>{{company.bankName}}<br>A/c name: {{company.bankAccountName}}<br>A/c no.: {{company.bankAccountNumber}}<br>IFSC: {{company.ifsc}}<br>Branch: {{company.bankBranch}}</div><div class="bank"><h3>Declaration / Notes</h3>{{invoice.declaration}}<br><br>For payment queries: {{company.phone}} · {{company.email}}</div></section>
+<footer class="footer"><div>{{company.address}}<br>GSTIN: {{company.gstin}} · {{company.phone}} · {{company.email}}</div><div class="sign"><b>For Sindhu's Pickles</b><div class="signline">Authorised Signatory</div></div></footer>
+</main></body></html>

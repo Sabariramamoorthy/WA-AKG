@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Sindhu's Pickles — Retail Invoice</title><link rel="stylesheet" href="invoice.css"></head>
+<body><main class="sheet"><div class="topbar"></div>
+<header class="brand">
+  <img class="logo" src="{{company.logoUrl}}" alt="Sindhu's Pickles logo">
+  <div><h1>Sindhu's Pickles</h1><p class="tagline">Homemade Non-Vegetarian Pickles</p><div class="small">Traditional recipes · Gingelly oil · No artificial preservatives*</div></div>
+  <div class="seller"><b>{{company.legalName}}</b><br>{{company.address}}<br>GSTIN: {{company.gstin}}<br>{{company.phone}} · {{company.email}}</div>
+</header>
+<section class="dochead"><div><h2>RETAIL INVOICE</h2><span class="pill">B2C · CUSTOMER COPY</span></div>
+<div class="meta"><div class="meta-row"><span>Invoice No.</span><b>{{invoice.number}}</b></div><div class="meta-row"><span>Invoice Date</span><b>{{invoice.date}}</b></div><div class="meta-row"><span>Due Date</span><b>{{invoice.dueDate}}</b></div><div class="meta-row"><span>Payment Status</span><b>{{invoice.paymentStatus}}</b></div></div></section>
+<section class="cards"><div class="panel"><h3>Bill To</h3><div class="body"><b>{{customer.name}}</b><br>{{customer.address}}<br>{{customer.phone}}<br>{{customer.email}}</div></div>
+<div class="panel"><h3>Ship To</h3><div class="body">{{shipping.name}}<br>{{shipping.address}}<br>{{shipping.phone}}</div></div></section>
+<table><thead><tr><th>#</th><th>Product / Description</th><th>HSN</th><th class="num">Qty</th><th class="num">Rate (₹)</th><th class="num">Tax</th><th class="num">Amount (₹)</th></tr></thead><tbody>
+{{#each lines}}<tr><td>{{index}}</td><td><b>{{description}}</b><span class="taxnote">{{packSize}}</span></td><td>{{hsn}}</td><td class="num">{{quantity}}</td><td class="num">{{unitPrice}}</td><td class="num">{{taxSummary}}</td><td class="num"><b>{{lineTotal}}</b></td></tr>{{/each}}
+</tbody></table>
+<section class="summary-wrap"><div class="note"><b>Thank you for choosing Sindhu's Pickles.</b><br>Your support helps us keep traditional recipes alive.<br><br><span class="small">Store in a cool, dry place. Refrigerate after opening. Refer to product label for best-before and storage instructions.</span></div>
+<div class="totals"><div class="total-row"><span>Subtotal</span><b>₹ {{totals.subtotal}}</b></div><div class="total-row"><span>Discount</span><b>₹ {{totals.discount}}</b></div><div class="total-row"><span>Shipping</span><b>₹ {{totals.shipping}}</b></div><div class="total-row"><span>CGST</span><b>₹ {{totals.cgst}}</b></div><div class="total-row"><span>SGST / IGST</span><b>₹ {{totals.sgstOrIgst}}</b></div><div class="total-row grand"><span>Grand Total</span><span>₹ {{totals.grandTotal}}</span></div></div></section>
+<div class="words"><b>Amount in words:</b> {{totals.amountInWords}}</div>
+<section class="bankrow"><div class="bank"><h3>Payment Details</h3>{{payment.method}}<br>Reference: {{payment.reference}}<br>Payment status: {{invoice.paymentStatus}}</div><div class="bank"><h3>Bank / UPI Details</h3>{{company.bankName}}<br>A/c name: {{company.bankAccountName}}<br>A/c no.: {{company.bankAccountNumber}}<br>IFSC: {{company.ifsc}}</div></section>
+<footer class="footer"><div>{{company.address}}<br>{{company.phone}} · {{company.email}}</div><div class="sign"><b>For Sindhu's Pickles</b><div class="signline">Authorised Signatory</div></div></footer>
+</main></body></html>

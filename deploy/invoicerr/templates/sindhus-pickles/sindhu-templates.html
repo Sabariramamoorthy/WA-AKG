@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sindhu's Pickles — Invoice Template Master</title>
+  <style>
+    :root { --green:#063f32; --gold:#c89b3c; --cream:#f7f4ea; --ink:#1b2a23; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Georgia, "Times New Roman", serif; color:var(--ink); background:linear-gradient(160deg,#eef3ef,#f7f4ea 45%,#e8efe9); min-height:100vh; }
+    header { background:var(--green); color:#fff; padding:28px 24px; }
+    header h1 { margin:0; font-size:28px; }
+    header p { margin:8px 0 0; color:#e9d9ae; font-family:Arial,sans-serif; font-size:14px; max-width:720px; }
+    main { max-width:920px; margin:0 auto; padding:28px 20px 48px; }
+    h2 { font-size:22px; margin:28px 0 10px; color:var(--green); }
+    p, li { font-family:Arial,Helvetica,sans-serif; line-height:1.55; font-size:15px; }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px; }
+    @media (max-width:720px){ .grid{grid-template-columns:1fr} }
+    a.card { display:block; text-decoration:none; color:inherit; background:#fff; border:1px solid #dfe5df; border-radius:12px; padding:18px; }
+    a.card strong { display:block; color:var(--green); font-size:18px; margin-bottom:6px; }
+    a.card span { font-family:Arial,sans-serif; font-size:13px; color:#556; }
+    .note { background:var(--cream); border:1px solid #e8dfc9; border-radius:10px; padding:14px 16px; }
+    code { background:#eef2ef; padding:1px 6px; border-radius:4px; font-size:13px; }
+    ol { padding-left:1.2rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Invoice Template Master</h1>
+    <p>Stock Invoicerr has no template catalog. This page is the Sindhu B2B / B2C master for the live PDF overlay.</p>
+  </header>
+  <main>
+    <div class="note">
+      <strong>How templates are chosen</strong>
+      <p style="margin:8px 0 0">On <strong>Invoices</strong>, use the green floating panel: <em>B2B Tax</em> or <em>B2C Retail</em>. That writes <code>[[TEMPLATE:B2B]]</code> or <code>[[TEMPLATE:B2C]]</code> into invoice Notes. The PDF renderer picks the layout from that tag (or buyer GSTIN for B2B).</p>
+    </div>
+
+    <h2>PDF layouts</h2>
+    <div class="grid">
+      <a class="card" href="/sindhu-ref/invoice-b2b.html" target="_blank" rel="noopener">
+        <strong>B2B Tax Invoice</strong>
+        <span>GST tax invoice layout for registered buyers (GSTIN on client).</span>
+      </a>
+      <a class="card" href="/sindhu-ref/invoice-b2c.html" target="_blank" rel="noopener">
+        <strong>B2C Retail Invoice</strong>
+        <span>Retail / consumer invoice when buyer has no GSTIN.</span>
+      </a>
+    </div>
+
+    <h2>Change invoice status</h2>
+    <ol>
+      <li><strong>Draft → Unpaid (issue):</strong> open the invoice PDF/detail URL, then floating panel → <em>Issue (Draft → Unpaid)</em>. Removes the Draft watermark.</li>
+      <li><strong>Unpaid → Paid:</strong> floating panel → <em>Mark as Paid</em>, or Invoices list → payment / Mark as paid (creates a Payment).</li>
+      <li><strong>Send:</strong> floating panel → <em>Send by email</em> (needs SMTP), or list → Send by email (sets Sent).</li>
+      <li><strong>Archive:</strong> only after Paid — use Invoices list archive action.</li>
+    </ol>
+
+    <h2>Create form tip</h2>
+    <p>The stock create-invoice dialog has no “template type” dropdown. Before saving a new invoice, click <em>B2B Tax</em> or <em>B2C Retail</em> on the floating panel so Notes gets the tag. Empty Notes auto-prefills your last choice.</p>
+
+    <h2>Also in Settings</h2>
+    <p>Company PDF colors / email bodies live under <strong>Settings</strong> (PDF template + email templates). Those are not a multi-layout invoice master — B2B/B2C lives here and in the PDF overlay.</p>
+
+    <p style="margin-top:32px;font-family:Arial,sans-serif;font-size:13px;color:#667"><a href="/invoices" style="color:var(--green)">← Back to Invoices</a></p>
+  </main>
+</body>
+</html>

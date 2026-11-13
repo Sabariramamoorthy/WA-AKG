@@ -1,0 +1,26 @@
+source_repo=https://github.com/invoicerr-app/invoicerr
+license=AGPL-3.0
+cloned_git_ref=dev
+cloned_git_sha=487ab811dcae8ed98222f50de98de3a62b99cdfc
+cloned_git_date_utc=2026-11-13 09:55:29 +0000
+deployed_image=ghcr.io/invoicerr-app/invoicerr@sha256:615f4cec6cd1e22ac8e473c6ae33f7191ca93d32545fca38cddc3368b3419eec
+deployed_image_created_utc=2026-06-29T10:33:00Z
+deployed_image_matches_release=v1.4.5c
+latest_github_release_tag=v1.4.5c
+latest_github_tag=v2.0.0-alpha.6
+note=ghcr :latest tracks the last stable release (v1.4.5c), NOT current dev tip. Do not customize against newer source until image/source are aligned.
+openship_project=proj_ea6Mql2Ol0GpWvZ2
+openship_server=HP Mini Elite (5b423771-c5ba-4ae7-98a2-1746a0973592) Tailscale 100.98.161.75
+compose_path=deploy/invoicerr/docker-compose.yml
+postgres=postgres:15
+redis=redis:7.4-alpine
+app_url_public=https://invoicerr.app.cloudshiftsolutions.in
+edge=VPS Caddy → Tailscale 100.98.161.75:80 → Openship edge 127.0.0.1:20012 → container :80 (nginx)
+required_env=PORT=3000 (Nest); exposedPort 80 remains nginx. Without PORT=3000 Nest steals :80 and UI 404s.
+health_public=GET /api/health → {"status":"ok","database":"up"} (verified 2026-11-13 ~20:26 IST)
+ui_public=GET / and /auth/sign-in → 200 text/html Invoicerr SPA (verified same)
+admin_email_local_baseline=admin@cloudshiftsolutions.in
+company_local_baseline=Sindhu's Pickles (Baseline)
+company_currency=INR
+company_country=IN
+fork_status=BLOCKED — Cursor GitHub App token cannot create forks (HTTP 403). Target org: cloudshiftsolutions-dev
