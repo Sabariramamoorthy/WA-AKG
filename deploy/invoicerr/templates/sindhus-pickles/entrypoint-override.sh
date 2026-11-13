@@ -36,6 +36,13 @@ cd /usr/share/nginx/backend
 npx prisma db push --accept-data-loss --schema=/usr/share/nginx/backend/prisma/schema.prisma
 cd /usr/share/nginx/backend/src
 
+# Overlay Sindhu B2B/B2C invoice PDF template when present in the image/repo mount.
+if [ -f /usr/share/nginx/backend/src/modules/invoices/templates/base.template.js.sindhu ]; then
+  echo "Applying Sindhu invoice PDF template overlay..."
+  cp /usr/share/nginx/backend/src/modules/invoices/templates/base.template.js.sindhu \
+     /usr/share/nginx/backend/src/modules/invoices/templates/base.template.js
+fi
+
 # Start the backend service
 echo "Starting backend service..."
 node main.js &
